@@ -40,8 +40,12 @@ foreach (scandir($inputDir . '/_posts') as $mdFile) {
     }
 
     // Output it all.
-    $title = isset($data['title']) ? preg_replace('/[ \/]/', '_', $data['title']) : 'Post ' . $data['id'];
+    $title = isset($data['title']) ? preg_replace('/[ \/#%]/', '_', html_entity_decode($data['title'])) : 'Post ' . $data['id'];
     $outfile = $outputDir . '/' . $title . '.txt';
+    if (file_exists($outfile)) {
+        $count = count(glob($outputDir . '/' . $title . '*'));
+        $outfile = $outputDir . '/' . $title . '_' . ($count+1) . '.txt';
+    }
     $origMeta = "<!-- Original WordPress metadata:\n".$matches[1]."\n-->\n";
     file_put_contents($outfile, $tpl . "\n\n" . trim($wikitext) ."\n\n$cats\n\n$origMeta");
 
